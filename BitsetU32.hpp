@@ -23,6 +23,7 @@ class BitsetU32
         std::string getBinary(void) const;
 
         uint32_t    getDigit(void) const;
+        void        setDigit(uint32_t new_digit);
         void        setBit(int i, int value);
         int         getMSBIdx(void) const;
         BitsetU32   getGC(void) const;

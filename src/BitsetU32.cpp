@@ -70,14 +70,20 @@ std::string BitsetU32::getBinary(void) const
     std::string binaryStr;
     
     for (int MSB = this->getMSBIdx(), idx = 0; MSB >= 0; MSB--, idx++)
+    {
         binaryStr += (*this)[MSB] + '0'; 
-
+    }
     return (binaryStr);
 }
 
 uint32_t   BitsetU32::getDigit(void) const
 {
     return (this->digit);
+}
+
+void   BitsetU32::setDigit(uint32_t new_digit)
+{
+    this->digit = new_digit;
 }
 
 // Reverse index again (i)
@@ -98,7 +104,7 @@ int BitsetU32::getMSBIdx() const
         return (-1);
 
     int idx = -1;
-    for (int i = 1; i < static_cast<int>(this->digit); i *= 2)
+    for (int i = 1; i <= static_cast<int>(this->digit); i *= 2)
         idx++;
 
     return (idx);
