@@ -1,4 +1,4 @@
-NAME		= ReadySetBoole
+NAME		= ex00
 	
 CC			= c++
 FLAGS		= -Wall -Wextra -Werror
@@ -7,11 +7,11 @@ RM			= rm -rf
 OBJDIR 		= obj
 SRCDIR		= src
 
-FILES		= main BitsetU32 eval_formula print_truth_table
+FILES		= main BitsetU32
 
 SRC			= $(addprefix $(SRCDIR)/,$(FILES:=.cpp))
 OBJ			= $(addprefix $(OBJDIR)/, $(FILES:=.o))
-HEADER		= BitsetU32.hpp includes.hpp
+HEADER		= BitsetU32.hpp
 
 #Colors:
 GREEN		=	\e[92;5;118m
@@ -27,7 +27,7 @@ $(NAME): $(OBJ) $(HEADER)
 	$(CC) $(OBJ) -o $(NAME)
 	@printf "$(_SUCCESS) $(GREEN)- Executable ready.\n$(RESET)"
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.cpp $(HEADER)
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp $(HEADER) Makefile
 	@mkdir -p $(OBJDIR)
 	@$(CC) $(FLAGS) -c $< -o $@
 

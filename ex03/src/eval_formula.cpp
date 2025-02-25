@@ -4,19 +4,6 @@
 # include <array>
 # include <stack>
 
-class ErrorException: public std::exception
-{
-    private:
-        std::string msg;
-
-    public:
-        ErrorException(std::string new_msg): msg(new_msg) {}
-        const char  *what() const throw()
-        {
-            return (this->msg.c_str());
-        }
-};
-
 bool eval_formula(std::string &formula)
 {
     if (formula.empty())
@@ -35,11 +22,11 @@ bool eval_formula(std::string &formula)
         {
             if (numStack.empty())
                 throw ErrorException("Invalid number of operators");
-            result = numStack.top();
+            int fromStack = numStack.top();
             numStack.pop();
             if (numStack.empty())
                 throw ErrorException("Invalid number of operators");
-            int fromStack = numStack.top();
+            result = numStack.top();
             numStack.pop();
             switch (formula[i])
             {
@@ -53,10 +40,7 @@ bool eval_formula(std::string &formula)
                     result ^= fromStack;
                     break;
                 case '>':
-                    if (result == 1 && fromStack == 0)
-                        result = 0;
-                    else
-                        result = 1;
+                        result = (!result) | fromStack;
                     break;
                 case '=':
                     result = (result == fromStack);

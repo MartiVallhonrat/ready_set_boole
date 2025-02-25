@@ -3,19 +3,6 @@
 # include <exception>
 # include <map>
 
-class ErrorException: public std::exception
-{
-    private:
-        std::string msg;
-
-    public:
-        ErrorException(std::string new_msg): msg(new_msg) {}
-        const char  *what() const throw()
-        {
-            return (this->msg.c_str());
-        }
-};
-
 void print_truth_table(std::string &formula)
 {
     if (formula.empty())
