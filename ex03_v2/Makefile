@@ -7,11 +7,11 @@ RM			= rm -rf
 OBJDIR 		= obj
 SRCDIR		= src
 
-FILES		= main eval_formula TreeNode
+FILES		= main eval_formula
 
 SRC			= $(addprefix $(SRCDIR)/,$(FILES:=.cpp))
 OBJ			= $(addprefix $(OBJDIR)/, $(FILES:=.o))
-HEADER		= includes.hpp TreeNode.hpp
+HEADER		= includes.hpp
 
 #Colors:
 GREEN		=	\e[92;5;118m

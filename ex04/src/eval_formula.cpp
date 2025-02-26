@@ -1,10 +1,69 @@
-# include "../includes.hpp"
 # include <exception>
 # include <algorithm>
 # include <array>
 # include <stack>
 
-bool eval_formula(std::string &formula)
+# include "../includes.hpp"
+# include "../TreeNode.hpp"
+
+// testing
+static void printPostorder(TreeNode* node)
+{
+    if (node == nullptr)
+        return;
+
+    printPostorder(node->left);
+
+    printPostorder(node->right);
+
+    std::cout << node->value << (node->has_negative ? "!" : "") << " ";
+}
+
+static char execPostorder(TreeNode *node)
+{
+    if (node->left == nullptr || node->right == nullptr)
+        return (0);
+
+    execPostorder(node->left);
+    execPostorder(node->right);
+
+    switch (node->value)
+    {
+        case '&':
+            node->value = (node->left->value - '0') & (node->right->value - '0');
+            node->value = (node->value + '0');
+            break;
+        case '|':
+            node->value = (node->left->value - '0') | (node->right->value - '0');
+            node->value = (node->value + '0');
+            break;               
+        case '^':
+            node->value = (node->left->value - '0') ^ (node->right->value - '0');
+            node->value = (node->value + '0');
+            break;
+        case '>':
+            node->value = (!(node->left->value - '0')) | (node->right->value - '0');
+            node->value = (node->value + '0');
+            break;
+        case '=':
+            node->value = (node->left->value - '0') == (node->right->value - '0');
+            node->value = (node->value + '0');
+            break;
+    };
+    if (node->has_negative)
+        node->value = (node->value == '0' ? '1' : '0');
+
+    return (node->value);
+}
+
+static void handleError(TreeNode *root, std::string errStr)
+{
+    if (root != nullptr)
+        delete root;
+    throw ErrorException(errStr);
+}
+
+TreeNode *createTree(std::string &formula)
 {
     if (formula.empty())
         throw ErrorException("No input provided");
@@ -12,64 +71,67 @@ bool eval_formula(std::string &formula)
     std::array<char, 6> operators = {'&', '|', '^', '>', '='};
     std::array<char, 2> values = {'0', '1'};
     size_t formLen = formula.length();
-
-    std::stack<int> numStack;
-    int result;
-
+    
+    std::stack<TreeNode*> numStack;
+    TreeNode *root = nullptr;
+    
     for (size_t i = 0; i < formLen; i++)
     {
         if (std::find(operators.begin(), operators.end(), formula[i]) != operators.end())
         {
             if (numStack.empty())
-                throw ErrorException("Invalid number of operators");
-            int fromStack = numStack.top();
+                handleError(root, "Invalid number of operators");
+            TreeNode *fromStackRight = numStack.top();
             numStack.pop();
+    
             if (numStack.empty())
-                throw ErrorException("Invalid number of operators");
-            result = numStack.top();
+                handleError(root, "Invalid number of operators");
+            TreeNode *fromStackLeft = numStack.top();
             numStack.pop();
-            switch (formula[i])
-            {
-                case '&':
-                    result &= fromStack;
-                    break;
-                case '|':
-                    result |= fromStack;
-                    break;               
-                case '^':
-                    result ^= fromStack;
-                    break;
-                case '>':
-                        result = (!result) | fromStack;
-                    break;
-                case '=':
-                    result = (result == fromStack);
-                    break;
-            }
-            numStack.push(result);
+    
+            root = new TreeNode(formula[i]);
+            root->left = fromStackLeft;
+            root->right = fromStackRight;
+    
+            numStack.push(root);
         }
         else if (std::find(values.begin(), values.end(), formula[i]) != values.end())
         {
-            numStack.push(formula[i] - '0');
+            numStack.push(new TreeNode(formula[i]));
         }
         else if (formula[i] == '!')
         {
             if (numStack.empty())
-                throw ErrorException("Invalid number of numbers");
-
-            result = numStack.top();
+                handleError(root, "Invalid number of numbers");
+    
+            root = numStack.top();
             numStack.pop();
-            result = !result;
-            numStack.push(result);
+            root->has_negative = true;
+            numStack.push(root);
         }
         else
-            throw ErrorException("Invalid Input");
+            handleError(root, "Invalid Input");
     }
-
-    result = numStack.top();
+    
+    root = numStack.top();
     numStack.pop();
     if (!numStack.empty())
-        throw ErrorException("Invalid number of values");
+        handleError(root, "Invalid number of values");
+    
+    return (root);
 
+}
+
+bool eval_formula(std::string &formula)
+{
+    TreeNode *root = createTree(formula);
+
+    // DEBUGGING
+    // printPostorder(root);
+    
+    int result = (execPostorder(root) - '0');
+    
+    delete root;
+    
     return (result);
 }
