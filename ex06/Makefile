@@ -1,4 +1,4 @@
-NAME		= ex03
+NAME		= ex06
 	
 CC			= c++
 FLAGS		= -Wall -Wextra -Werror
@@ -7,11 +7,11 @@ RM			= rm -rf
 OBJDIR 		= obj
 SRCDIR		= src
 
-FILES		= main eval_formula
+FILES		= main BitsetU32 conjunctive_normal_form TreeNode
 
 SRC			= $(addprefix $(SRCDIR)/,$(FILES:=.cpp))
 OBJ			= $(addprefix $(OBJDIR)/, $(FILES:=.o))
-HEADER		= includes.hpp
+HEADER		= BitsetU32.hpp includes.hpp TreeNode.hpp
 
 #Colors:
 GREEN		=	\e[92;5;118m

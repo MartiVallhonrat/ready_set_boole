@@ -15,8 +15,11 @@ class TreeNode
         TreeNode *right = nullptr;
         
         TreeNode();
+        TreeNode(const TreeNode &other);
         TreeNode(char new_value);
         ~TreeNode();
+
+        TreeNode &operator=(const TreeNode &other);
 };
 
 

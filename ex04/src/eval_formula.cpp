@@ -56,10 +56,15 @@ static char execPostorder(TreeNode *node)
     return (node->value);
 }
 
-static void handleError(TreeNode *root, std::string errStr)
+static void handleError(std::stack<TreeNode*> numStack, std::string errStr)
 {
-    if (root != nullptr)
-        delete root;
+    while (!numStack.empty())
+    {
+        TreeNode *tmp = numStack.top();
+        numStack.pop();
+        if (tmp != nullptr)
+            delete tmp;
+    }
     throw ErrorException(errStr);
 }
 
@@ -80,12 +85,15 @@ TreeNode *createTree(std::string &formula)
         if (std::find(operators.begin(), operators.end(), formula[i]) != operators.end())
         {
             if (numStack.empty())
-                handleError(root, "Invalid number of operators");
+                handleError(numStack, "Invalid number of operators");
             TreeNode *fromStackRight = numStack.top();
             numStack.pop();
     
             if (numStack.empty())
-                handleError(root, "Invalid number of operators");
+            {
+                numStack.push(fromStackRight);
+                handleError(numStack, "Invalid number of operators");
+            }
             TreeNode *fromStackLeft = numStack.top();
             numStack.pop();
     
@@ -102,7 +110,7 @@ TreeNode *createTree(std::string &formula)
         else if (formula[i] == '!')
         {
             if (numStack.empty())
-                handleError(root, "Invalid number of numbers");
+                handleError(numStack, "Invalid number of numbers");
     
             root = numStack.top();
             numStack.pop();
@@ -110,13 +118,16 @@ TreeNode *createTree(std::string &formula)
             numStack.push(root);
         }
         else
-            handleError(root, "Invalid Input");
+            handleError(numStack, "Invalid Input");
     }
     
     root = numStack.top();
     numStack.pop();
     if (!numStack.empty())
-        handleError(root, "Invalid number of values");
+    {
+        numStack.push(root);
+        handleError(numStack, "Invalid number of values");
+    } 
     
     return (root);
 

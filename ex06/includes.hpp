@@ -16,6 +16,6 @@ class ErrorException: public std::exception
         }
 };
 
-bool eval_formula(std::string &formula);
+std::string conjunctive_normal_form(std::string &formula);
 
 #endif

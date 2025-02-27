@@ -1,4 +1,3 @@
-# include "../BitsetU32.hpp"
 # include "../includes.hpp"
 
 int main(void)

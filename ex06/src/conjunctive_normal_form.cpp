@@ -6,16 +6,21 @@
 # include <array>
 # include <stack>
 
-static void getPostorder(TreeNode* node, std::string &formula)
+static void getPostorderCommutative(TreeNode* node, std::string &literals, std::string &operands)
 {
     if (node == nullptr)
         return;
 
-    getPostorder(node->left, formula);
-    getPostorder(node->right, formula);
+    getPostorderCommutative(node->left, literals, operands);
+    getPostorderCommutative(node->right, literals, operands);
 
-    formula += node->value;
-    formula += (node->has_negative ? "!" : "");
+    if (std::isupper(node->value))
+    {
+        literals += node->value;
+        literals += (node->has_negative ? "!" : "");
+    }
+    else
+        operands += node->value;
 }
 
 static void transformNNF(TreeNode* node)
@@ -89,6 +94,53 @@ static void transformNNF(TreeNode* node)
 
     transformNNF(node->left);
     transformNNF(node->right);
+}
+
+static void transformCNF(TreeNode* node)
+{
+    if (node->left == nullptr || node->right == nullptr)
+        return;
+
+    switch (node->value)
+    {
+        case '|':
+        {
+            TreeNode *get = nullptr;
+            TreeNode *into = nullptr;
+                
+            if (node->left->value == '&')
+            {
+                get = node->right;
+                into = node->left;
+            }
+            else if (node->right->value == '&')
+            {
+                get = node->left;
+                into = node->right;
+            }
+            else
+                break;
+
+            node->value = '&';
+            TreeNode *new_node1 = new TreeNode('|');
+            new_node1->left = new TreeNode(*get);
+            new_node1->right = into->left;
+            into->left = nullptr;
+
+            TreeNode *new_node2 = new TreeNode('|');
+            new_node2->left = get;
+            new_node2->right = into->right;
+            into->right = nullptr;
+
+            node->left = new_node1;
+            node->right = new_node2;
+            delete into;
+            break;
+        }
+    }
+    
+    transformCNF(node->left);
+    transformCNF(node->right);
 }
 
 static void handleError(std::stack<TreeNode*> numStack, std::string errStr)
@@ -166,16 +218,19 @@ TreeNode *createTree(std::string &formula)
 
 }
 
-std::string negation_normal_form(std::string &formula)
+std::string conjunctive_normal_form(std::string &formula)
 {
-    std::string formulaNNF = "";
-
     TreeNode *root = createTree(formula);
     
     transformNNF(root);
-    getPostorder(root, formulaNNF);
+    transformCNF(root);
+    std::string literals = "";
+    std::string operands = "";
+    getPostorderCommutative(root, literals, operands);
+    // put operators to the end
+    std::string formCNF = literals + operands;
 
     delete root;
 
-    return (formulaNNF);
+    return (formCNF);
 }

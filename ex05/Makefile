@@ -7,11 +7,11 @@ RM			= rm -rf
 OBJDIR 		= obj
 SRCDIR		= src
 
-FILES		= main BitsetU32 negation_normal_form
+FILES		= main BitsetU32 negation_normal_form TreeNode
 
 SRC			= $(addprefix $(SRCDIR)/,$(FILES:=.cpp))
 OBJ			= $(addprefix $(OBJDIR)/, $(FILES:=.o))
-HEADER		= BitsetU32.hpp includes.hpp
+HEADER		= BitsetU32.hpp includes.hpp TreeNode.hpp
 
 #Colors:
 GREEN		=	\e[92;5;118m
