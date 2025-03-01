@@ -27,7 +27,6 @@ static char execPostorder(TreeNode *node)
             node->value = (node->value == '0' ? '1' : '0');
         return (0);
     }
-
     execPostorder(node->left);
     execPostorder(node->right);
 

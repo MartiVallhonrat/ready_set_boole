@@ -22,7 +22,11 @@ static void printPostorder(TreeNode* node)
 static char execPostorder(TreeNode *node)
 {
     if (node->left == nullptr || node->right == nullptr)
+    {
+        if (node->has_negative)
+            node->value = (node->value == '0' ? '1' : '0');
         return (0);
+    }
 
     execPostorder(node->left);
     execPostorder(node->right);
