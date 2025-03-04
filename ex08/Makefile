@@ -1,4 +1,4 @@
-NAME		= ex07
+NAME		= ex08
 	
 CC			= c++
 FLAGS		= -Wall -Wextra -Werror
@@ -7,11 +7,11 @@ RM			= rm -rf
 OBJDIR 		= obj
 SRCDIR		= src
 
-FILES		= main BitsetU32 eval_formula sat TreeNode
+FILES		= main powerset
 
 SRC			= $(addprefix $(SRCDIR)/,$(FILES:=.cpp))
 OBJ			= $(addprefix $(OBJDIR)/, $(FILES:=.o))
-HEADER		= BitsetU32.hpp includes.hpp TreeNode.hpp
+HEADER		= includes.hpp
 
 #Colors:
 GREEN		=	\e[92;5;118m
